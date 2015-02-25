@@ -1,7 +1,4 @@
-/**
- * Created by hWX229431 on 2015/2/12.
- */
-define(['ko'], function (ko) {
+(function ($, ko) {
     'use strict';
     ko.bindingHandlers.buttons = {
         update: function (element, valueAccessor, allBindingsAccessor) {
@@ -16,7 +13,7 @@ define(['ko'], function (ko) {
             /**
              * buttons will be like this:
              * buttons: [{name: 'play',action: function(){}},{name: 'record',action: function(){}},{name: 'download',action: function(){}}..]
-             * @type {number|t.buttons|*|ui.dialog.options.buttons|.options.buttons|{update: Function}}
+             * @type Array
              */
             var buttons = allBindings.buttons();
 
@@ -42,6 +39,8 @@ define(['ko'], function (ko) {
             };
 
             var showCircleButtons = function () {
+                console.log(mouseEvent);
+                var offsetY = mouseEvent.offsetY;
                 var pageX = mouseEvent.pageX;
                 var pageY = mouseEvent.pageY;
                 if (!moveFlag) {
@@ -80,11 +79,17 @@ define(['ko'], function (ko) {
                         }).appendTo($btnWrapper);
                     });
                     moveFlag = false;
-                    var btnWrapLeft, animateTimeArray = [], btnLeftPositionArray = [];
+                    var btnWrapLeft, btnWrapTop, animateTimeArray = [], btnLeftPositionArray = [];
+                    if(offsetY < BTN_WIDTH + 10){
+                        btnWrapTop = pageY;
+                    }else {
+                        btnWrapTop = pageY - BTN_WIDTH;
+                    }
                     if($(window).width() - pageX - btnWrapWidth < 40){
                         btnWrapLeft = pageX - btnWrapWidth - BTN_MARGIN;
                         _.each(btnList, function(btn, index){
-                            animateTimeArray.push(0.1 * (btnList.length - index -1) + 0.15);
+                            //animateTimeArray.push(0.1 * (btnList.length - index -1) + 0.15);
+                            animateTimeArray.push(0.1 * index + 0.15);
                             btnLeftPositionArray.push((btnList.length - index -1) * (BTN_WIDTH + BTN_MARGIN));
                         });
                     }else {
@@ -96,7 +101,7 @@ define(['ko'], function (ko) {
                     }
                     $btnWrapper.css({
                         left:  btnWrapLeft + 'px',
-                        top: pageY - BTN_WIDTH - 40 + 'px',
+                        top: btnWrapTop + 'px',
                         width: buttons.length * (BTN_WIDTH + BTN_MARGIN) - BTN_MARGIN + 'px',
                         height: BTN_WIDTH + 'px',
                         'z-index': '9999'
@@ -156,4 +161,4 @@ define(['ko'], function (ko) {
             });
         }
     };
-});
+})(jQuery, ko);
